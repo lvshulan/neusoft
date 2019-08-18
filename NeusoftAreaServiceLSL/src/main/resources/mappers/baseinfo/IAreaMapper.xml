@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neusoft.areaservice.baseinfo.mapper.IAreaMapper">
+
+  <cache/>
+  
+  <resultMap id="AreaResultMap" type="area">
+  	<id property="no" column="AREANO" />
+  	<result property="name" column="AREANAME" />
+  	<result property="address" column="AAddress" />
+  	<result property="developer" column="Developer" />
+  	<result property="buildingarea" column="TotalBuildingArea" />
+  	<result property="usearea" column="TotalUseArea" />
+  	<result property="parkarea" column="TotalParkArea" />
+  	<result property="home" column="TotalHome" />
+  	<result property="house" column="TotalHouse" />
+  	<result property="park" column="TotalPark" />
+  </resultMap>
+  
+  <insert id="create" keyProperty="no" keyColumn="AREANO" useGeneratedKeys="true" flushCache="true">
+  	insert into Area (AREANAME,AAddress,Developer,TotalBuildingArea,TotalUseArea,TotalParkArea,TotalHome,TotalHouse,TotalPark) 
+  	values (#{name},#{address},#{developer},#{buildingarea},#{usearea},#{parkarea},#{home},#{house},#{park})
+  </insert>
+  
+  <update id="update" flushCache="true">
+  	update Area set AREANAME=#{name},AAddress=#{address},Developer=#{developer},TotalBuildingArea=#{buildingarea},TotalUseArea=#{usearea},
+  	TotalParkArea=#{parkarea},TotalHome=#{home},TotalHouse=#{house},TotalPark=#{park} where AREANO=#{no} 
+  </update>
+  
+  <delete id="delete" flushCache="true">
+  	delete from Area where AREANO=#{no} 
+  </delete>
+  
+  <!-- 查询小区的信息 -->
+  <select id="selectAreaListByAll" resultMap="AreaResultMap" >
+  	select * from Area 
+  </select>
+  
+   <!-- 取得指定小区的信息 -->
+  <select id="selectAreaByNo" resultMap="AreaResultMap" >
+  	select * from Area where AREANO=#{no} 
+  </select>
+  
+  <!-- 取得所有小区列表,分页模式 -->
+  <select id="selectListByAllWithPage" resultMap="AreaResultMap">
+   select * from Area limit #{start},#{rows}
+  </select>
+  
+  <!-- 取得小区的个数，使用IFNULL函数判断count函数结果是否为null, 为null返回0 -->
+  <select id="selectCountByAll" resultType="int">
+   select IFNULL(count(AREANO), 0) from Area
+  </select>
+  
+  <!-- 取得开发商列表 -->
+  <select id="selectListByDeveloper" resultMap="AreaResultMap">
+   select distinct Developer from area
+  </select>  
+  
+  <!-- 根据综合检索条件取得小区列表 -->
+  <select id="selectListByConditionWithPage" resultMap="AreaResultMap">
+   select * from Area 
+  <where>
+     <if test="name!=null and name!=''">
+      and AREANAME like #{name}
+     </if>
+     <if test="developer!=null and developer!=''">
+     and Developer like #{developer}
+     </if>
+     <if test="minbuildingarea!=null and minbuildingarea!=''">
+     and TotalBuildingArea &gt;=#{minbuildingarea}
+     </if>
+     <if test="maxbuildingarea!=null and maxbuildingarea!=''">
+     and TotalBuildingArea &lt;=#{maxbuildingarea}
+     </if>
+     <if test="minhome!=0">
+     and TotalHome &gt;=#{minhome}
+     </if>
+      <if test="maxhome!=0">
+     and TotalHome &lt;=#{maxhome}
+     </if>
+      <if test="minhouse!=0">
+     and TotalHouse &gt;=#{minhouse}
+     </if>
+      <if test="maxhouse!=0">
+     and TotalHouse &lt;=#{maxhouse}
+     </if>
+     
+  </where>
+    limit #{start},#{rows}
+  </select>
+  
+  <!-- 根据综合检索条件取得小区个数 -->
+  <select id="selectCountByCondition" resultType="int">
+  select IFNULL(count(AREANO), 0) from Area 
+  <where>
+     <if test="name!=null and name!=''">
+      and AREANAME like #{name}
+     </if>
+     <if test="developer!=null and developer!=''">
+     and Developer like #{developer}
+     </if>
+     <if test="minbuildingarea!=null and minbuildingarea!=''">
+     and TotalBuildingArea &gt;=#{minbuildingarea}
+     </if>
+     <if test="maxbuildingarea!=null and maxbuildingarea!=''">
+     and TotalBuildingArea &lt;=#{maxbuildingarea}
+     </if>
+     <if test="minhome!=0">
+     and TotalHome &gt;=#{minhome}
+     </if>
+      <if test="maxhome!=0">
+     and TotalHome &lt;=#{maxhome}
+     </if>
+      <if test="minhouse!=0">
+     and TotalHouse &gt;=#{minhouse}
+     </if>
+      <if test="maxhouse!=0">
+     and TotalHouse &lt;=#{maxhouse}
+     </if>
+  </where>
+   
+  </select>
+  
+</mapper>
